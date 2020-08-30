@@ -8,3 +8,14 @@ export function isObject(params:any):boolean {
 export function isDate(params: any): params is Date {
   return ToString.call(params) === '[object Date]'
 }
+
+
+export function sExtends<T,U>(to:T,from:U): T & U {
+
+  for(let i in from){
+    (to as T & U)[i] = from[i] as any
+  }
+
+
+  return to as T & U
+}
