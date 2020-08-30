@@ -1,3 +1,4 @@
+
 import { BaseFetchConfig, fetchResponsePromise } from '../types'
 import { formatUrl } from "../utils/utils";
 import { xhr } from '../utils/xhr'
@@ -19,7 +20,3 @@ function formatConfig(config: BaseFetchConfig) {
 }
 
 export default sFetch
-
-
-
-

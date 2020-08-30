@@ -44,6 +44,11 @@ export interface fetchError extends Error{
 }
 
 export interface fetchBase {
+  interceptors: {
+    request: InterceptorManger<BaseFetchConfig>
+    response: InterceptorManger<fetchResponse>
+  }
+
   request(config: BaseFetchConfig): fetchResponsePromise
   get(url: string, config?: BaseFetchConfig): fetchResponsePromise
 
@@ -64,3 +69,16 @@ export interface fetchBaseInstance extends fetchBase{
   (config: BaseFetchConfig): fetchResponsePromise
   (url: string, config?: BaseFetchConfig): fetchResponsePromise
 }
+
+export interface InterceptorManger<T> {
+  use(resolved: Resolved<T>, rejected: Rejected): number
+}
+
+export interface Resolved<T> {
+  (val:T): T | Promise<T>
+}
+
+export interface Rejected{
+  (error: any): any
+}
+
