@@ -1,4 +1,4 @@
-import { BaseFetchConfig, fetchResponsePromise, method, fetchResponse } from '../types'
+import { BaseFetchConfig, fetchResponsePromise, method, fetchResponse, Resolved, Rejected } from '../types'
 import sFetch from './baseFetch'
 import InterceptorManage from './interceptorManage'
 
@@ -14,13 +14,19 @@ interface Interceptors {
   response: InterceptorManage<fetchResponse>
 }
 
+
+interface PromiseChain<T> {
+  resolved: Resolved<T> | ((config: BaseFetchConfig) => fetchResponsePromise)
+  rejected?: Rejected
+}
+
 export default class FetchCls{
   interceptors: Interceptors
 
   constructor() {
     this.interceptors = {
-      request: new InterceptorManage(),
-      response: new InterceptorManage(),
+      request: new InterceptorManage<BaseFetchConfig>(),
+      response: new InterceptorManage<fetchResponse>(),
     }
   }
 
@@ -35,7 +41,29 @@ export default class FetchCls{
       config = url
     }
 
-    return sFetch(config)
+    let chains:PromiseChain<any>[] = [
+      {
+        resolved: sFetch,
+        rejected: undefined
+      }
+    ]
+
+    this.interceptors.request.forEach((elem)=>{
+      chains.unshift(elem)
+    })
+
+    this.interceptors.response.forEach((elem)=>{
+      chains.push(elem)
+    })
+
+    let promise = Promise.resolve(config)
+
+    while (chains.length){
+      let { resolved, rejected } = chains.shift()!;
+      promise = promise.then(resolved, rejected)
+    }
+
+    return promise
   }
 
   get(url:string,config?:BaseFetchConfig):fetchResponsePromise{

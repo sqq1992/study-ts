@@ -1,15 +1,13 @@
 import { Resolved, Rejected } from "../types"
 
-
-interface interceptor<T> {
+interface Interceptor<T> {
   resolved: Resolved<T>,
   rejected?: Rejected
 }
 
-
 export default class InterceptorManage<T> {
 
-  private interceptors: Array<interceptor<T> | null>
+  private interceptors: Array<Interceptor<T> | null>
 
   constructor() {
     this.interceptors = []
@@ -25,8 +23,12 @@ export default class InterceptorManage<T> {
     return this.interceptors.length - 1
   }
 
-  forEach(){
-
+  forEach(fn: (interceptor: Interceptor<T>) => void): void {
+    this.interceptors.forEach((elem) => {
+      if (elem) {
+        fn(elem)
+      }
+    })
   }
 
   eject(id:number):void{

@@ -71,7 +71,8 @@ export interface fetchBaseInstance extends fetchBase{
 }
 
 export interface InterceptorManger<T> {
-  use(resolved: Resolved<T>, rejected: Rejected): number
+  use(resolved: Resolved<T>, rejected?: Rejected): number
+  eject(id: number): void
 }
 
 export interface Resolved<T> {
