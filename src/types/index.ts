@@ -1,4 +1,4 @@
-export type method =
+export type Method =
   'get'
   | 'GET'
   | 'post'
@@ -15,13 +15,17 @@ export type method =
   | 'PATCH'
 
 export interface BaseFetchConfig {
-  method: method;
+  method?: Method;
   url?: string;
   params?: any;
   headers?: any,
   data?: any,
   responseType?: XMLHttpRequestResponseType,
-  timeout?: number
+  timeout?: number,
+
+
+
+  [propsName: string]: any
 }
 
 export interface fetchResponse {
@@ -44,6 +48,7 @@ export interface fetchError extends Error{
 }
 
 export interface fetchBase {
+  defaults: BaseFetchConfig
   interceptors: {
     request: InterceptorManger<BaseFetchConfig>
     response: InterceptorManger<fetchResponse>
@@ -83,3 +88,5 @@ export interface Rejected{
   (error: any): any
 }
 
+
+//

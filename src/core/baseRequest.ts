@@ -1,9 +1,10 @@
-import { BaseFetchConfig, fetchResponsePromise, method, fetchResponse, Resolved, Rejected } from '../types'
+import { BaseFetchConfig, fetchResponsePromise, Method, fetchResponse, Resolved, Rejected } from '../types'
 import sFetch from './baseFetch'
 import InterceptorManage from './interceptorManage'
+import mergeConfig from './mergeConfig'
 
 type requestDetailParams = {
-  method: method,
+  method: Method,
   url?: string,
   data?: any,
   config?: BaseFetchConfig
@@ -22,8 +23,10 @@ interface PromiseChain<T> {
 
 export default class FetchCls{
   interceptors: Interceptors
+  defaults: BaseFetchConfig
 
-  constructor() {
+  constructor(initConfig:BaseFetchConfig) {
+    this.defaults = initConfig
     this.interceptors = {
       request: new InterceptorManage<BaseFetchConfig>(),
       response: new InterceptorManage<fetchResponse>(),
@@ -40,6 +43,8 @@ export default class FetchCls{
     } else {
       config = url
     }
+
+    config = mergeConfig(this.defaults, config)
 
     let chains:PromiseChain<any>[] = [
       {

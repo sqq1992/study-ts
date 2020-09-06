@@ -1,4 +1,5 @@
-import { isObject } from './sLodash'
+import { deepCopy, isObject } from './sLodash'
+import { Method } from '../types'
 
 export function formatRequestHeaders(headers: any, data: any): object {
 
@@ -33,4 +34,21 @@ export function formatResponseHeaders(headers: string): object {
 
 
   return formatObj
+}
+
+export function flattenHeaders(headers: any, method?: Method):any {
+  if(!headers){
+    return headers
+  }
+
+  headers = deepCopy(headers.common, headers[method!], headers)
+
+  const methodsToDelete = ['delete', 'get', 'head', 'options', 'post', 'put', 'patch', 'common']
+
+  methodsToDelete.forEach(method => {
+    delete headers[method]
+  })
+
+  return headers
+
 }

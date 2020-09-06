@@ -19,3 +19,34 @@ export function sExtends<T,U>(to:T,from:U): T & U {
 
   return to as T & U
 }
+
+export function deepCopy(...objs:any[]): any {
+  const result = Object.create(null)
+
+  objs.forEach((detailObj)=>{
+
+    if(detailObj){
+
+      Object.keys(detailObj).forEach((smallElem)=>{
+
+        if(isObject(detailObj[smallElem])){
+
+          if(isObject(result[smallElem])){
+            result[smallElem] = deepCopy(result[smallElem], detailObj[smallElem])
+          }else {
+            result[smallElem] = deepCopy(detailObj[smallElem])
+          }
+
+        }else {
+          result[smallElem] = detailObj[smallElem]
+        }
+
+      })
+
+    }
+
+  })
+
+
+  return result
+}

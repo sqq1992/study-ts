@@ -10,7 +10,7 @@ export function xhr(config: BaseFetchConfig):fetchResponsePromise {
 
     const request = new XMLHttpRequest()
 
-    request.open(method.toUpperCase(), url, true)
+    request.open(method.toUpperCase(), url!, true)
 
     //设置请求头
     for(let i in headers){
