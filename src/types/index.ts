@@ -22,7 +22,8 @@ export interface BaseFetchConfig {
   data?: any,
   responseType?: XMLHttpRequestResponseType,
   timeout?: number,
-
+  transformRequest?: TransformData | TransformData[],
+  transformResponse?: TransformData | TransformData[],
 
 
   [propsName: string]: any
@@ -88,5 +89,6 @@ export interface Rejected{
   (error: any): any
 }
 
-
-//
+export interface TransformData {
+  (data: any, headers?: any): any
+}

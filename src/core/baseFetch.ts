@@ -2,21 +2,20 @@
 import { BaseFetchConfig, fetchResponsePromise } from '../types'
 import { formatUrl } from "../utils/utils";
 import { xhr } from '../utils/xhr'
-import { formatSendData, formatResponseData } from "../utils/formatData";
-import { formatRequestHeaders, flattenHeaders } from "../utils/formatHeaders";
+import { transformUtils } from './transform'
+import { flattenHeaders } from "../utils/formatHeaders";
 
 function sFetch(config: BaseFetchConfig): fetchResponsePromise {
   formatConfig(config)
   return xhr(config).then((res) => {
-    res.data = formatResponseData(res.data)
+    res.data = transformUtils(res.data, config.headers, config.transformResponse)
     return res
   })
 }
 
 function formatConfig(config: BaseFetchConfig) {
   config.url = formatUrl(config.url || '', config.params)
-  config.headers = formatRequestHeaders(config.headers, config.data)
-  config.data = formatSendData(config.data)
+  config.data = transformUtils(config.data, config.headers, config.transformRequest)
   config.headers = flattenHeaders(config.headers, config.method)
 }
 
