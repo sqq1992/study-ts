@@ -24,7 +24,7 @@ export interface BaseFetchConfig {
   timeout?: number,
   transformRequest?: TransformData | TransformData[],
   transformResponse?: TransformData | TransformData[],
-
+  cancelToken?: CancelTokenType
 
   [propsName: string]: any
 }
@@ -76,6 +76,14 @@ export interface fetchBaseInstance extends fetchBase{
   (url: string, config?: BaseFetchConfig): fetchResponsePromise
 }
 
+export interface fetchBaseStatic extends fetchBaseInstance{
+  create(config: BaseFetchConfig): fetchBaseInstance
+
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
+}
+
 export interface InterceptorManger<T> {
   use(resolved: Resolved<T>, rejected?: Rejected): number
   eject(id: number): void
@@ -91,4 +99,35 @@ export interface Rejected{
 
 export interface TransformData {
   (data: any, headers?: any): any
+}
+
+
+export interface Canceler {
+  (message?: string): void
+}
+
+export interface CancelExecutor {
+  (fn: Canceler): void
+}
+
+export interface CancelTokenType {
+  promise: Promise<Cancel>,
+  reason?: Cancel,
+  throwIfRequested():void
+}
+
+export interface CancelTokenSource {
+  token: CancelTokenType,
+  cancel: Canceler
+}
+
+export interface CancelTokenStatic {
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+export interface CancelStatic {
+  new(message?: string): Cancel
 }

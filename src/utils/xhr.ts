@@ -6,7 +6,7 @@ import { FetchError } from '../class/fetchError'
 export function xhr(config: BaseFetchConfig):fetchResponsePromise {
 
   return new Promise((resolve,reject)=>{
-    const { data = null, url, method = 'get', responseType, headers, timeout } = config
+    const { data = null, url, method = 'get', responseType, headers, timeout, cancelToken } = config
 
     const request = new XMLHttpRequest()
 
@@ -72,6 +72,12 @@ export function xhr(config: BaseFetchConfig):fetchResponsePromise {
       }))
     }
 
+    if(cancelToken){
+      cancelToken.promise.then((reason)=>{
+        request.abort()
+        reject(reason)
+      })
+    }
 
     request.send(data)
   })
