@@ -2,15 +2,19 @@ import { BaseFetchConfig } from './types'
 import { formatRequestHeaders } from './utils/formatHeaders'
 import { formatSendData, formatResponseData } from './utils/formatData'
 
-const defaultConfig:BaseFetchConfig = {
+const defaultConfig: BaseFetchConfig = {
   method: 'get',
   timeout: 0,
 
-  headers:{
-    common:{
+  headers: {
+    common: {
       Accept: 'application/json, text/plain, */*'
     }
   },
+
+  withCredentials: false,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 
   transformRequest: [
     function(data: any, headers?: any): any {
@@ -19,7 +23,7 @@ const defaultConfig:BaseFetchConfig = {
     }
   ],
 
-  transformResponse:[
+  transformResponse: [
     function(data: any): any {
       return formatResponseData(data)
     }

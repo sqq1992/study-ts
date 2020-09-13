@@ -62,3 +62,26 @@ export function formatUrl(url: string, params: any): string {
 
   return url
 }
+
+export function resolveUrl(url: string) {
+  const aLink = document.createElement('a')
+  const { protocol, host } = aLink
+  return{
+    protocol,
+    host
+  }
+}
+
+export function isSamUrlOrigin(url: string): boolean {
+  const currentPageUrlObj = resolveUrl(window.location.href)
+  const currentUrlObj = resolveUrl(url)
+
+  return currentPageUrlObj.protocol === currentUrlObj.protocol && currentPageUrlObj.host === currentUrlObj.host
+}
+
+export const comBineCookieUtils = {
+  read(name:string): string |null{
+    const match = document.cookie.match(new RegExp('(^|;\\s*)('+name+')=([^;]*)'))
+    return match ? decodeURIComponent(match[3]) : null
+  }
+}

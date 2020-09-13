@@ -1,25 +1,39 @@
 import { BaseFetchConfig, fetchResponsePromise, fetchResponse } from '../types'
 import { formatResponseHeaders } from './formatHeaders'
 import { FetchError } from '../class/fetchError'
+import { comBineCookieUtils, isSamUrlOrigin } from './utils'
 
 
 export function xhr(config: BaseFetchConfig):fetchResponsePromise {
 
   return new Promise((resolve,reject)=>{
-    const { data = null, url, method = 'get', responseType, headers, timeout, cancelToken } = config
+    const { data = null, url, method = 'get', responseType, headers, timeout, cancelToken, withCredentials,xsrfCookieName,
+      xsrfHeaderName } = config
 
     const request = new XMLHttpRequest()
 
     request.open(method.toUpperCase(), url!, true)
 
+    //设置csrf
+    if((withCredentials && isSamUrlOrigin(url!)) && xsrfCookieName){
+      let cookieVal = comBineCookieUtils.read(xsrfCookieName)
+      if(cookieVal && xsrfHeaderName){
+        headers[xsrfHeaderName] = cookieVal
+      }
+    }
+
     //设置请求头
     for(let i in headers){
       request.setRequestHeader(i, headers[i])
     }
+
     if(timeout){
       request.timeout = timeout
     }
 
+    if(withCredentials){
+      request.withCredentials = withCredentials
+    }
 
     //设置回调函数
     request.onreadystatechange = function() {

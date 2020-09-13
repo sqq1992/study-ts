@@ -25,6 +25,9 @@ export interface BaseFetchConfig {
   transformRequest?: TransformData | TransformData[],
   transformResponse?: TransformData | TransformData[],
   cancelToken?: CancelTokenType
+  withCredentials?: boolean
+  xsrfCookieName?: string
+  xsrfHeaderName?: string
 
   [propsName: string]: any
 }
