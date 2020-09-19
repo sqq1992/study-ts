@@ -27,7 +27,11 @@ const defaultConfig: BaseFetchConfig = {
     function(data: any): any {
       return formatResponseData(data)
     }
-  ]
+  ],
+
+  validateStatus(status: number): boolean {
+    return status >= 200 && status < 300
+  }
 
 }
 

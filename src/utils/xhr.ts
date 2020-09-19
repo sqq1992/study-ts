@@ -7,19 +7,26 @@ import { comBineCookieUtils, isSamUrlOrigin } from './utils'
 export function xhr(config: BaseFetchConfig):fetchResponsePromise {
 
   return new Promise((resolve,reject)=>{
-    const { data = null, url, method = 'get', responseType, headers, timeout, cancelToken, withCredentials,xsrfCookieName,
-      xsrfHeaderName } = config
+    const {
+      data = null, url, method = 'get', responseType, headers, timeout, cancelToken, withCredentials, xsrfCookieName,
+      xsrfHeaderName, onDownloadProgress, onUploadProgress, auth, validateStatus
+    } = config
 
     const request = new XMLHttpRequest()
 
     request.open(method.toUpperCase(), url!, true)
 
+    //todo 设置请求的配置
     //设置csrf
-    if((withCredentials && isSamUrlOrigin(url!)) && xsrfCookieName){
+    if((withCredentials || isSamUrlOrigin(url!)) && xsrfCookieName){
       let cookieVal = comBineCookieUtils.read(xsrfCookieName)
       if(cookieVal && xsrfHeaderName){
         headers[xsrfHeaderName] = cookieVal
       }
+    }
+
+    if (auth) {
+      headers['Authorization'] = 'Basic ' + btoa(auth.username + ':' + auth.password)
     }
 
     //设置请求头
@@ -56,7 +63,7 @@ export function xhr(config: BaseFetchConfig):fetchResponsePromise {
         request
       }
 
-      if(request.status>=200 && request.status<300){
+      if(!validateStatus || validateStatus(response.status)){
         resolve(response)
       }else {
         reject(new FetchError({
@@ -68,7 +75,6 @@ export function xhr(config: BaseFetchConfig):fetchResponsePromise {
       }
 
     }
-
 
     request.onerror = function() {
       reject(new FetchError({
@@ -84,6 +90,14 @@ export function xhr(config: BaseFetchConfig):fetchResponsePromise {
         request,
         config,
       }))
+    }
+
+    if (onDownloadProgress) {
+      request.onprogress = onDownloadProgress
+    }
+
+    if (onUploadProgress) {
+      request.upload.onprogress = onUploadProgress
     }
 
     if(cancelToken){

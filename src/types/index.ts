@@ -28,6 +28,10 @@ export interface BaseFetchConfig {
   withCredentials?: boolean
   xsrfCookieName?: string
   xsrfHeaderName?: string
+  onDownloadProgress?: (e: ProgressEvent) => void
+  onUploadProgress?: (e: ProgressEvent) => void
+  auth?: SFetchBasicCredentials
+  validateStatus?: (status: number) => boolean
 
   [propsName: string]: any
 }
@@ -80,7 +84,7 @@ export interface fetchBaseInstance extends fetchBase{
 }
 
 export interface fetchBaseStatic extends fetchBaseInstance{
-  create(config: BaseFetchConfig): fetchBaseInstance
+  create(config?: BaseFetchConfig): fetchBaseInstance
 
   CancelToken: CancelTokenStatic
   Cancel: CancelStatic
@@ -133,4 +137,9 @@ export interface Cancel {
 }
 export interface CancelStatic {
   new(message?: string): Cancel
+}
+
+export interface SFetchBasicCredentials {
+  username:string
+  password:string
 }
